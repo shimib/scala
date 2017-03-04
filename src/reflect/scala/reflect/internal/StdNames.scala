@@ -826,6 +826,8 @@ trait StdNames {
     val SyntacticAssign: NameType           = "SyntacticAssign"
     val SyntacticBlock: NameType            = "SyntacticBlock"
     val SyntacticClassDef: NameType         = "SyntacticClassDef"
+    // shimi
+    val SyntacticCofor: NameType            = "SyntacticCofor"
     val SyntacticCompoundType: NameType     = "SyntacticCompoundType"
     val SyntacticDefDef: NameType           = "SyntacticDefDef"
     val SyntacticEmptyTypeTree: NameType    = "SyntacticEmptyTypeTree"

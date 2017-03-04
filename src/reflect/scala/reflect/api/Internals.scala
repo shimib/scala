@@ -746,12 +746,19 @@ trait Internals { self: Universe =>
 
     val SyntacticFor: SyntacticForExtractor
     val SyntacticForYield: SyntacticForExtractor
-
+    // shimi
+    val SyntacticCofor: SyntacticCoforExtractor
+    
     trait SyntacticForExtractor {
       def apply(enums: List[Tree], body: Tree): Tree
       def unapply(tree: Tree): Option[(List[Tree], Tree)]
     }
-
+    // shimi
+    trait SyntacticCoforExtractor {
+      def apply(inputPattern: Tree, enums: List[Tree], body: Tree): Tree
+      def unapply(tree: Tree): Option[(Tree, List[Tree], Tree)]
+    }
+    
     def UnliftListElementwise[T](unliftable: Unliftable[T]): UnliftListElementwise[T]
     trait UnliftListElementwise[T] {
       def unapply(lst: List[Tree]): Option[List[T]]

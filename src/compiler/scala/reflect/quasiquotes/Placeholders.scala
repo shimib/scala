@@ -198,4 +198,7 @@ trait Placeholders { self: Quasiquotes =>
       case _ => None
     }
   }
+  // shimi
+  object CoforEnumP
+  
 }

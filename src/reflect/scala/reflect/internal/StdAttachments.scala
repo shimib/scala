@@ -61,7 +61,6 @@ trait StdAttachments {
    */
   case object ForAttachment extends PlainAttachment
 
-  // shimi TODO: find who uses it
   case object CoforAttachment extends PlainAttachment 
   
   /** Identifies unit constants which were inserted by the compiler (e.g. gen.mkBlock)

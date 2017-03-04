@@ -182,6 +182,9 @@ trait Reifiers { self: Quasiquotes =>
         reifyBuildCall(nme.SyntacticFor, enums, body)
       case SyntacticForYield(enums, body) =>
         reifyBuildCall(nme.SyntacticForYield, enums, body)
+        // shimi
+      case SyntacticCofor(inputPattern, enums, body) =>
+        reifyBuildCall(nme.SyntacticCofor, inputPattern, enums, body)
       case SyntacticAssign(lhs, rhs) =>
         reifyBuildCall(nme.SyntacticAssign, lhs, rhs)
       case SyntacticApplied(fun, argss) if argss.nonEmpty =>

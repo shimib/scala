@@ -775,6 +775,29 @@ trait ReificationSupport { self: SymbolTable =>
     protected object UnForeach extends UnForCombination(nme.foreach)
     protected object UnFlatMap extends UnForCombination(nme.flatMap)
 
+    // shimi
+    protected object UnCoforBlock {
+      def unapply(tree: Tree) : Option[(Tree)] = tree match {
+        case SyntacticBlock(_ :+ SyntacticTuple(gen +: _ +: Nil)) => Some((gen))
+        case _ => None
+      }
+    }
+    
+    // shimi (what about implicits from above??)
+    protected object UnCoflatMap {
+      def unapply(tree: Tree) : Option[(Tree, Tree)] = tree match {
+        case SyntacticApplied(SyntacticTypeApplied(sel @ Select(lhs, nme.coflatMap), _), (UnCoforBlock(f) :: Nil) :: Nil)
+          if sel.hasAttachment[CoforAttachment.type] =>
+            println("UUUU")
+            println(showRaw(lhs))
+            println("UUUU2")
+            println(showRaw(f))
+            println("UUUU")
+          Some((lhs, f))
+        case _ => None
+      }
+    }
+    
     // undo desugaring done in gen.mkFor
     protected object UnFor {
       def unapply(tree: Tree): Option[(List[Tree], Tree)] = {
@@ -800,7 +823,28 @@ trait ReificationSupport { self: SymbolTable =>
         }
       }
     }
-
+    // shimi
+    // undo desugaring done in gen.mkCofor
+    protected object UnCofor {
+      def unapply(tree: Tree): Option[(Tree, List[Tree], Tree)] = tree match {
+        case sel @ UnClosure(_, Block(ValDef(_,_,_, UnCoflatMap(maybeNested, _)) +: Nil, 
+            Block(_, yieldExpr))) if sel.hasAttachment[CoforAttachment.type]=>
+          println("XXXX")
+          //println(showRaw(ttt))
+          println("YYYY")
+//          println(showRaw(body))
+          println("ZZZZ")
+          println(showRaw(yieldExpr))
+          println("XXXX")
+         // val result = Some(???, ???,gen.Yield(yieldExpr))
+          None
+        /*case sel @ Function(list, Block(body +: Nil, lastPhase)) if sel.hasAttachment[CoforAttachment.type] =>
+          
+          None*/
+        case _ => None
+      }
+    }
+    
     // check that enumerators are valid
     protected def mkEnumerators(enums: List[Tree]): List[Tree] = {
       require(enums.nonEmpty, "enumerators can't be empty")
@@ -832,6 +876,17 @@ trait ReificationSupport { self: SymbolTable =>
       }
     }
 
+    // shimi
+    object SyntacticCofor extends SyntacticCoforExtractor {
+      def apply(inputPattern: Tree, enums: List[Tree], body: Tree): Tree = 
+        gen.mkCoFor(inputPattern, mkEnumerators(enums), body)
+      def unapply(tree: Tree) = tree match {
+        case UnCofor(inputPattern, enums, body) => Some((inputPattern, enums, body))
+        case _ => None
+      }
+    }
+    
+    
     // use typetree's original instead of typetree itself
     protected object MaybeTypeTreeOriginal {
       def unapply(tree: Tree): Some[Tree] = tree match {

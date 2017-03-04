@@ -1528,13 +1528,13 @@ self =>
             tree setPos tree.pos.withStart(start)
           else tree
         adjustStart(parseFor)
-      case COFOR =>
+      case COFOR if settings.YcoforExtension=>
         val start = in.skipToken()
         def parseCoFor = atPos(start) {
           
           val inputPattern = inParens(gen.patvarTransformer.transform(noSeq.pattern1()))
           val enums =
-            inBracesOrNil(cofor_enumerators())
+            inBraces(cofor_enumerators())
           newLinesOpt()
           accept(YIELD)
  

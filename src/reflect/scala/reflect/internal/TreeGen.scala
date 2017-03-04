@@ -537,6 +537,7 @@ abstract class TreeGen {
   // Opaque tree encoding can be changed/adapted at any time without
   // breaking end users code.
 
+  // shimi i'll try to reuse this!!!
   /** Encode/decode fq"$pat <- $rhs" enumerator as q"`<-`($pat, $rhs)" */
   object ValFrom {
     def apply(pat: Tree, rhs: Tree): Tree =
@@ -832,7 +833,7 @@ abstract class TreeGen {
             ValDef(Modifiers(ARTIFACT) /* TODO: is needed? */, v._1.toTermName , TypeTree(NoType),
                Apply(Select(comonadWithPatternToExtract.duplicate, nme.map) setPos pos updateAttachment CoforAttachment, 
                    List{
-                     makeClosure(pos, tmpe.duplicate, v._2) setPos pos updateAttachment CoforAttachment
+                     makeClosure(pos, tmpe.duplicate, v._2) setPos pos 
                      }) setPos pos) )
           // get all variables & patterns
           
@@ -844,7 +845,7 @@ abstract class TreeGen {
     def makeCombination(pos: Position, genIdx: Int, envNames: List[Tree], prev: Tree, qual: Tree): Tree = {
       val envName = Ident(freshTermName("env"))
 
-      val lastBlockExpr = mkTuple(qual +: (Select(envName, nme.extract) setPos qual.pos updateAttachment CoforAttachment) +: Nil)
+      val lastBlockExpr = mkTuple(qual +: (Select(envName, nme.extract) setPos qual.pos) +: Nil)
       val bodyExpr = generateEnv(pos, genIdx, envNames, envName) :+ lastBlockExpr
 
       val envFunc = makeClosure(pos, envName, Block(bodyExpr: _*))
@@ -917,7 +918,7 @@ abstract class TreeGen {
     val lastPhase = generateEnv(pos, enums.size + inputNamesCount, envNames, Ident(enumsBodyName)) :+ body
 
     // compose all
-    makeClosure(pos, inputTermName, Block(enumsBody, Block(lastPhase: _*))) setPos pos
+    makeClosure(pos, inputTermName, Block(enumsBody, Block(lastPhase: _*))) setPos pos updateAttachment CoforAttachment
 
   }
   /** Create tree for pattern definition <val pat0 = rhs> */
